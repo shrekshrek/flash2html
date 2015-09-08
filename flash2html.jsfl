@@ -5,9 +5,9 @@ function init(){
 	timeline = doc.getTimeline();
 	lib = doc.library;
 	fileURI = doc.pathURI.slice(0, doc.pathURI.lastIndexOf("/")+1);
-	
+
 	var _tlData = cookTimeline(timeline);
-	
+
 	exportHtml(_tlData.html);
 	exportCss(_tlData.css);
 	//fl.trace(_tlData.html);
@@ -22,7 +22,7 @@ init();
 function cookTimeline(timeline, className){
 	var _html = '';
 	var _css = '';
-	
+
 	timeline.layers.forEach(function(layer){
 		if(layer.layerType == 'normal'){
 			var elements = layer.frames[0].elements;
@@ -46,7 +46,7 @@ function cookTimeline(timeline, className){
 					case 'text':
 						break;
 				}
-				
+
 				if(domObj){
 					_html += domObj.html;
 					_css += (className?('.' + className + ' '):'') + domObj.css;
@@ -54,7 +54,7 @@ function cookTimeline(timeline, className){
 			}
 		}
 	});
-	
+
 	return {
 		html:_html,
 		css:_css
@@ -75,7 +75,7 @@ function exportImg (libItem){
 			break;
 	}
 	libItem.exportToFile(aURL, 100);
-	
+
 	return {
 		name:libItem.name,
 		url:rURL
@@ -104,7 +104,7 @@ function cerateDiv(ele, img){
 	ele.rotation = 0;
 	ele.scaleX = 1;
 	ele.scaleY = 1;
-	
+
 	var _w = Math.round(ele.width);
 	var _h = Math.round(ele.height);
 	var _x = Math.round(ele.x);
@@ -114,38 +114,37 @@ function cerateDiv(ele, img){
 	ele.rotation = _r;
 	ele.scaleX = _sx;
 	ele.scaleY = _sy;
-	
-	var _name = checkName(ele.libraryItem.name);
-	var _cName = ele.name || _name || createClassName();
+
+	var _cName = ele.name || checkName(ele.libraryItem.name);
 	var _tlData,_html,_css;
-	
-	_css = '.' + _cName + 
-	'{position:absolute;' + 
-	'width:' + _w + 'px;' + 
-	'height:' + _h + 'px;' + 
-	'left:' + _x + 'px;' + 
+
+	_css = '.' + _cName +
+	'{position:absolute;' +
+	'left:' + _x + 'px;' +
 	'top:' + _y + 'px;';
-	
+
 	if(img){
-		_css += 
+		_css +=
+		'width:' + _w + 'px;' +
+		'height:' + _h + 'px;' +
 		'background:url("../' + img + '");'
 	}
-	
+
 	if(_a){
-		_css += 
+		_css +=
 		'opacity:' + _a + ';'
 	}
-	
+
 	if(_r !== 0 || _sx !== 1 || _sy !== 1){
-		_css += 
-		'transform-origin:' + (_tx-_x) + 'px ' + (_ty-_y) + 'px;' + 
-		'-webkie-transform-origin:' + (_tx-_x) + 'px ' + (_ty-_y) + 'px;' + 
-		'transform:rotate(' + _r + 'deg) scale(' + _sx + ',' + _sy + ');' + 
+		_css +=
+		'transform-origin:' + (_tx-_x) + 'px ' + (_ty-_y) + 'px;' +
+		'-webkie-transform-origin:' + (_tx-_x) + 'px ' + (_ty-_y) + 'px;' +
+		'transform:rotate(' + _r + 'deg) scale(' + _sx + ',' + _sy + ');' +
 		'-webkie-transform:rotate(' + _r + 'deg) scale(' + _sx + ',' + _sy + ');';
 	}
-	
+
 	_css += '}';
-	
+
 	if(ele.libraryItem.timeline){
 		_tlData = cookTimeline(ele.libraryItem.timeline, _cName);
 		_html = '<div class="' + _cName + '">' + _tlData.html + '</div>';
@@ -153,7 +152,7 @@ function cerateDiv(ele, img){
 	}else{
 		_html = '<div class="' + _cName + '">' + '</div>';
 	}
-	
+
 	return {
 		html:_html,
 		css:_css
