@@ -12,10 +12,6 @@ function init(){
 	exportCss(_tlData.css);
 }
 
-init();
-
-
-//---------------------------------------输出
 
 function cookTimeline(timeline, className){
 	var _html = '';
@@ -47,7 +43,7 @@ function cookTimeline(timeline, className){
 				
 				if(domObj){
 					_html += domObj.html;
-					_css += (className?('.' + className + ' '):'') + domObj.css;
+					_css += (className?('.' + className + '>'):'') + domObj.css;
 				}
 			}
 		}
@@ -157,7 +153,9 @@ function cerateDiv(ele, img){
 	
 	var _tf = '';
 	if(!isNaN(_r)){
-		_tf += 'rotate(' + _r + 'deg) ';
+		if(_r != 0){
+			_tf += 'rotate(' + _r + 'deg) ';
+		}
 	}else if(!isNaN(_kx) && !isNaN(_ky)){
 		_tf += 'skew(' + _kx + 'deg,' + _ky + 'deg) ';
 	}
@@ -191,8 +189,19 @@ function cerateDiv(ele, img){
 
 var cid = 0;
 function createClassName(name){
-	var _name = parseInt(name[0])+'' == name[0]?('p'+name):name;
-	return (_name||'div') + 's' + ++cid;
+	var _name = isNaN(parseInt(name[0]))?name:('p'+name);
+	return checkUnique(_name)?_name:(_name + 's' + ++cid);
+}
+
+var uniqueName = [];
+function checkUnique(name){
+	for(var i in uniqueName){
+		if(uniqueName[i] == name){
+			return false;
+		}
+	}
+	uniqueName.push(name);
+	return true;
 }
 
 function checkName(name){
@@ -213,5 +222,6 @@ function checkName(name){
 }
 
 
+init();
 
 
