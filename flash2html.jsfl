@@ -22,10 +22,10 @@ init();
 function cookTimeline(timeline, className){
 	var _html = '';
 	var _css = '';
-
-	timeline.layers.forEach(function(layer){
+	for(var len = timeline.layers.length, j = len-1; j>=0; j--){
+		var layer = timeline.layers[j];
 		if(layer.layerType == 'normal'){
-			var elements = layer.frames[0].elements;
+			var elements = layer.frames[0].elements;fl.trace(elements);
 			for(var i in elements){
 				var ele = elements[i];
 				var domObj = null;
@@ -53,7 +53,7 @@ function cookTimeline(timeline, className){
 				}
 			}
 		}
-	});
+	}
 
 	return {
 		html:_html,
@@ -114,8 +114,8 @@ function cerateDiv(ele, img){
 	ele.rotation = _r;
 	ele.scaleX = _sx;
 	ele.scaleY = _sy;
-
-	var _cName = ele.name || checkName(ele.libraryItem.name);
+	fl.trace('name:'+ele.libraryItem.name);
+	var _cName = ele.name || createClassName(checkName(ele.libraryItem.name));
 	var _tlData,_html,_css;
 
 	_css = '.' + _cName +
@@ -160,8 +160,8 @@ function cerateDiv(ele, img){
 }
 
 var cid = 0;
-function createClassName(){
-	return 'div' + ++cid;
+function createClassName(name){
+	return (name||'div') + 's' + ++cid;
 }
 
 function checkName(name){
