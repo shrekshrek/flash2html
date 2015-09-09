@@ -27,17 +27,25 @@ function cookTimeline(timeline, className){
 					case 'instance':
 						switch(ele.instanceType){
 							case 'symbol':
-								domObj = cerateDiv(ele);
+								domObj = createDom(ele, 'div');
 								break;
 							case 'bitmap':
 								var img = exportImg(ele.libraryItem).url;
-								domObj = cerateDiv(ele, img);
+								domObj = createDom(ele, 'img', img);
 								break;
 						}
 						break;
 					case 'shape':
 						break;
 					case 'text':
+						switch(ele.textType){
+							case 'input':
+								domObj = createDom(ele, 'input');
+								break;
+							default:
+								domObj = createDom(ele, 'p');
+								break;
+						}
 						break;
 				}
 				
@@ -86,7 +94,7 @@ function exportImg (libItem){
 
 function exportHtml (text){
 	var _fileURL = fileURI + 'index.html';
-	var _text = '<!DOCTYPE html><html><head lang="en"><meta charset="UTF-8"><title></title><style>html,body{background:' + doc.backgroundColor + '}</style><link rel="stylesheet" href="css/main.css"/></head><body>' + text + '</body></html>';
+	var _text = '<!DOCTYPE html><html><head lang="en"><meta charset="UTF-8"><title></title><style>body,div,ul,li,img,p,a,h1,h2,h3,input,span{margin:0px;padding:0px;border:0px;}html,body{background:' + doc.backgroundColor + '}</style><link rel="stylesheet" href="css/main.css"/></head><body>' + text + '</body></html>';
 	FLfile.write(_fileURL, _text);
 }
 
@@ -98,7 +106,7 @@ function exportCss (text){
 	FLfile.write(_fileURL, _text);
 }
 
-function cerateDiv(ele, img){
+function createDom(ele, type, img){
 	var _a = Math.round(ele.colorAlphaPercent)/100;
 	var _r = Math.round(ele.rotation);
 	var _sx = Math.round(ele.scaleX*100)/100;
@@ -131,19 +139,41 @@ function cerateDiv(ele, img){
 	ele.scaleX = _sx;
 	ele.scaleY = _sy;
 	
-	var _cName = ele.name || createClassName(checkName(ele.libraryItem.name).name);
-	var _tlData,_html,_css;
+	var _cName,_html,_css;
+	
+	switch(type){
+		case 'div':
+		case 'img':
+			_cName = ele.name || createClassName(checkName(ele.libraryItem.name).name);
+			break;
+		case 'input':
+			_cName = ele.name || createClassName('input');
+			break;
+		case 'p':
+			_cName = ele.name || createClassName('txt');
+			break;
+	}
 	
 	_css = '.' + _cName + 
 	'{position:absolute;' + 
 	'left:' + _x + 'px;' + 
 	'top:' + _y + 'px;';
 	
-	if(img){
-		_css += 
-		'width:' + _w + 'px;' + 
-		'height:' + _h + 'px;' + 
-		'background:url("../' + img + '");'
+	switch(type){
+		case 'div':
+			break;
+		case 'img':
+			_css += 
+			'width:' + _w + 'px;' + 
+			'height:' + _h + 'px;' + 
+			'background:url("../' + img + '");'
+			break;
+		case 'input':
+		case 'p':
+			_css += 
+			'width:' + _w + 'px;' + 
+			'height:' + _h + 'px;'
+			break;
 	}
 	
 	if(_a){
@@ -173,12 +203,29 @@ function cerateDiv(ele, img){
 	
 	_css += '}';
 	
-	if(ele.libraryItem.timeline){
-		_tlData = cookTimeline(ele.libraryItem.timeline, _cName);
-		_html = '<div class="' + _cName + '">' + _tlData.html + '</div>';
-		_css += _tlData.css;
-	}else{
-		_html = '<div class="' + _cName + '">' + '</div>';
+	//if(ele.libraryItem.timeline){
+	//	_tlData = cookTimeline(ele.libraryItem.timeline, _cName);
+	//	_html = '<div class="' + _cName + '">' + _tlData.html + '</div>';
+	//	_css += _tlData.css;
+	//}else{
+	//	_html = '<div class="' + _cName + '">' + '</div>';
+	//}
+	
+	switch(type){
+		case 'div':
+			var _tlData = cookTimeline(ele.libraryItem.timeline, _cName);
+			_html = '<div class="' + _cName + '">' + _tlData.html + '</div>';
+			_css += _tlData.css;
+			break;
+		case 'img':
+			_html = '<div class="' + _cName + '">' + '</div>';
+			break;
+		case 'input':
+			_html = '<input type="text" class="' + _cName + '"/>';
+			break;
+		case 'p':
+			_html = '<p class="' + _cName + '">' + ele.getTextString() + '</p>';
+			break;
 	}
 	
 	return {
@@ -190,7 +237,7 @@ function cerateDiv(ele, img){
 var cid = 0;
 function createClassName(name){
 	var _name = isNaN(parseInt(name[0]))?name:('p'+name);
-	return checkUnique(_name)?_name:(_name + 's' + ++cid);
+	return checkUnique(_name)?_name:(_name + '_' + ++cid);
 }
 
 var uniqueName = [];
