@@ -1,10 +1,10 @@
 ﻿var fileURI,doc,timeline,lib;
 
-function init(){
+function run(){
 	doc = fl.getDocumentDOM();
 	timeline = doc.getTimeline();
 	lib = doc.library;
-	fileURI = doc.pathURI.slice(0, doc.pathURI.lastIndexOf("/")+1);
+	fileURI = doc.pathURI.slice(0, doc.pathURI.lastIndexOf("/") + 1);
 	
 	var _tlData = cookTimeline(timeline);
 	
@@ -222,6 +222,6 @@ function checkName(name){
 }
 
 
-init();
+run();
 
 
