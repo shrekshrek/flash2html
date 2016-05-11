@@ -18,4 +18,6 @@ movieclip转成没有高宽的div标签，
 
 执行即可自动将当前flash文档转换为同目录下的html文件  
 
+配合athena:https://github.com/shrekshrek/athena-with-webpack  
+可以做到非常流畅的开发体验  
 
