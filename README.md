@@ -9,7 +9,7 @@ flash2html
   运行uninstall.jsfl  
 
 安装后即可在flash软件菜单Commands中找到flash2html命令集  
-当前只有一个img2div命令，会将所有  
+当前只有一个psd2div命令，目的就是将psd导入flash之后可以方便的导出成更适合开发的格式  
 bitmap转成带background属性的div标签（以方便webpack打包之用），  
 movieclip转成没有高宽的div标签，  
 普通文本框转成p标签（包含文本内容），  
