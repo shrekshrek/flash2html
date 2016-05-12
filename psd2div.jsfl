@@ -246,7 +246,7 @@ function checkName(name) {
 	var _a = name.split("/");
 	for (var _len = _a.length, i = _len - 1; i >= 0; i--) {
 		var _t = _a[i];
-		var _n1 = _t.indexOf("Assets");
+		var _n1 = _t.indexOf("Asset");
 		if (_n1 >= 0) {
 			_a.splice(i, 1);
 		} else {
