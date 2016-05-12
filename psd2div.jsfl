@@ -251,7 +251,7 @@ function checkName(name) {
 			_a.splice(i, 1);
 		} else {
 			var _n2 = _t.lastIndexOf(".");
-			_t = _n2 >= 0 ? _t.slice(0, _n) : _t;
+			_t = _n2 >= 0 ? _t.slice(0, _n1) : _t;
 			_t = _t.replace(/[\.\s]/g, "_");
 			_a[i] = _t;
 		}
