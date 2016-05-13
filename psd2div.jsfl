@@ -96,7 +96,7 @@ function exportImg(libItem) {
 
 function exportHtml(text) {
     var _fileURL = fileURI + 'index.html';
-    var _text = '<!DOCTYPE html><html><head lang="en"><meta charset="UTF-8"><title></title><style>body,div,ul,li,img,p,a,h1,h2,h3,input,span{margin:0px;padding:0px;border:0px;}html,body{background:' + doc.backgroundColor + '}div{position:absolute;top:0px;left:0px;}</style></head><body>' + text + '</body></html>';
+    var _text = '<!DOCTYPE html><html><head lang="en"><meta charset="UTF-8"><title></title><style>body,div,ul,li,img,p,a,h1,h2,h3,input,span{margin:0px;padding:0px;border:0px;}html,body{background:' + doc.backgroundColor + '}</style></head><body>' + text + '</body></html>';
     FLfile.write(_fileURL, _text);
 }
 
@@ -154,8 +154,10 @@ function createDom(ele, type, img) {
     _cName = _cName != '' ? 'class="' + _cName + '"' : '';
 
     _css += 'position:absolute;';
-    if (_x != 0) _css += "left:" + _x + "px;";
-    if (_y != 0) _css += "top:" + _y + "px;";
+    _css += "left:" + _x + "px;";
+    _css += "top:" + _y + "px;";
+    //if (_x != 0) _css += "left:" + _x + "px;";
+    //if (_y != 0) _css += "top:" + _y + "px;";
 
     switch (type) {
         case "div":
