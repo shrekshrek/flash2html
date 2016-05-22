@@ -44,10 +44,10 @@ function cookTimeline(timeline) {
 					case 'text':
 						switch (_ele.textType) {
 							case 'input':
-								_dom = createDom(ele, 'input');
+								_dom = createDom(_ele, 'input');
 								break;
 							default:
-								_dom = createDom(ele, 'p');
+								_dom = createDom(_ele, 'p');
 								break;
 						}
 						break;

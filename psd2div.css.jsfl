@@ -41,13 +41,13 @@ function cookTimeline(timeline, className) {
 						break;
 					case 'shape':
 						break;
-					case 'text':
+					case 'text':fl.trace(_ele.textType);
 						switch (_ele.textType) {
 							case 'input':
-								_dom = createDom(ele, 'input', className);
+								_dom = createDom(_ele, 'input', className);
 								break;
 							default:
-								_dom = createDom(ele, 'p', className);
+								_dom = createDom(_ele, 'p', className);
 								break;
 						}
 						break;
