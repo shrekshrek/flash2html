@@ -6,7 +6,7 @@ function run() {
 	lib = doc.library;
 	fileURI = doc.pathURI.slice(0, doc.pathURI.lastIndexOf("/") + 1);
 
-	var _tlData = cookTimeline(timeline);
+	var _tlData = cookTimeline(timeline, '');
 
 	exportHtml(_tlData.html);
 	exportCss(_tlData.css);
@@ -28,7 +28,7 @@ function cookTimeline(timeline, className) {
 					case 'instance':
 						switch (_ele.instanceType) {
 							case 'symbol':
-								_dom = createDom(_ele, 'div');
+								_dom = createDom(_ele, 'div', className);
 								break;
 							case 'bitmap':
 								_uniqueImg = {
@@ -44,10 +44,10 @@ function cookTimeline(timeline, className) {
 					case 'text':
 						switch (_ele.textType) {
 							case 'input':
-								_dom = createDom(ele, 'input');
+								_dom = createDom(ele, 'input', className);
 								break;
 							default:
-								_dom = createDom(ele, 'p');
+								_dom = createDom(ele, 'p', className);
 								break;
 						}
 						break;
@@ -55,7 +55,7 @@ function cookTimeline(timeline, className) {
 
 				if (_dom) {
 					_html += _dom.html;
-					_css += (className ? ('.' + className + ' ') : '') + _dom.css;
+					_css += _dom.css;
 				}
 			}
 		}
@@ -68,51 +68,7 @@ function cookTimeline(timeline, className) {
 	};
 }
 
-function exportImg(libItem) {
-	//fl.trace(libItem.originalCompressionType+','+libItem.compressionType);
-	var URI = 'images';
-	var aURL, rURL;
-	var _data = checkName(libItem.name);
-
-	for (var i in _data.path) {
-		URI += '/' + _data.path[i];
-		FLfile.createFolder(fileURI + URI);
-	}
-
-	var _name = _data.name;
-	switch (libItem.compressionType) {
-		case 'photo':
-			rURL = URI + '/' + _name + '.jpg';
-			aURL = fileURI + rURL;
-			break;
-		case 'lossless':
-			rURL = URI + '/' + _name + '.png';
-			aURL = fileURI + rURL;
-			break;
-	}
-	libItem.exportToFile(aURL, 100);
-
-	return {
-		name: libItem.name,
-		url: rURL
-	};
-}
-
-function exportHtml(text) {
-	var _fileURL = fileURI + 'index.html';
-	var _text = '<!DOCTYPE html><html><head lang="en"><meta charset="UTF-8"><title></title><style>body,div,ul,li,img,p,a,h1,h2,h3,input,span{margin:0px;padding:0px;border:0px;}html,body{background:' + doc.backgroundColor + '}</style><link rel="stylesheet" href="css/main.css"/></head><body>' + text + '</body></html>';
-	FLfile.write(_fileURL, _text);
-}
-
-function exportCss (text){
-	var _folderURI = fileURI + 'css';
-	var _fileURL = _folderURI + '/main.css';
-	var _text = text;
-	FLfile.createFolder(_folderURI);
-	FLfile.write(_fileURL, _text);
-}
-
-function createDom(ele, type, img) {
+function createDom(ele, type, className) {
 	var _a = Math.round(ele.colorAlphaPercent) / 100;
 	var _r = Math.round(ele.rotation);
 	var _sx = Math.round(ele.scaleX * 100) / 100;
@@ -155,12 +111,13 @@ function createDom(ele, type, img) {
 		case 'input':
 		case 'p':
 			_class = ele.name;
+			className += (className&&_class?' .':'') + _class;
 			break;
 	}
 
 	switch (type) {
 		case "div":
-			var _tlData = cookTimeline(ele.libraryItem.timeline, _class);
+			var _tlData = cookTimeline(ele.libraryItem.timeline, className);
 			break;
 	}
 
@@ -250,8 +207,8 @@ function createDom(ele, type, img) {
 			break;
 	}
 
-	if (_class != '' && _style != '') {
-		_css = '.' + _class + '{' + _style + '}';
+	if (className != '' && _style != '') {
+		_css = '.' + className + '{' + _style + '}' + _css;
 	}
 
 	return {
@@ -280,6 +237,50 @@ function checkName(name) {
 		path: _a,
 		name: _name
 	};
+}
+
+function exportImg(libItem) {
+	//fl.trace(libItem.originalCompressionType+','+libItem.compressionType);
+	var URI = 'images';
+	var aURL, rURL;
+	var _data = checkName(libItem.name);
+
+	for (var i in _data.path) {
+		URI += '/' + _data.path[i];
+		FLfile.createFolder(fileURI + URI);
+	}
+
+	var _name = _data.name;
+	switch (libItem.compressionType) {
+		case 'photo':
+			rURL = URI + '/' + _name + '.jpg';
+			aURL = fileURI + rURL;
+			break;
+		case 'lossless':
+			rURL = URI + '/' + _name + '.png';
+			aURL = fileURI + rURL;
+			break;
+	}
+	libItem.exportToFile(aURL, 100);
+
+	return {
+		name: libItem.name,
+		url: rURL
+	};
+}
+
+function exportHtml(text) {
+	var _fileURL = fileURI + 'index.html';
+	var _text = '<!DOCTYPE html><html><head lang="en"><meta charset="UTF-8"><title></title><style>body,div,ul,li,img,p,a,h1,h2,h3,input,span{margin:0px;padding:0px;border:0px;}html,body{background:' + doc.backgroundColor + '}</style><link rel="stylesheet" href="css/main.css"/></head><body>' + text + '</body></html>';
+	FLfile.write(_fileURL, _text);
+}
+
+function exportCss (text){
+	var _folderURI = fileURI + 'css';
+	var _fileURL = _folderURI + '/main.css';
+	var _text = text;
+	FLfile.createFolder(_folderURI);
+	FLfile.write(_fileURL, _text);
 }
 
 
