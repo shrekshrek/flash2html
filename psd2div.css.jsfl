@@ -111,7 +111,7 @@ function createDom(ele, type, className) {
 		case 'input':
 		case 'p':
 			_class = ele.name;
-			className += (className&&_class?' .':'') + _class;
+			className += (className && _class ? ' .' : '') + _class;
 			break;
 	}
 
@@ -129,9 +129,9 @@ function createDom(ele, type, className) {
 				_style +=
 					"width:" + Math.round(_tlData.img.width) + "px;" +
 					"height:" + Math.round(_tlData.img.height) + "px;";
-				if (_class != ''){
+				if (_class != '') {
 					_style += "background:url('../" + _tlData.img.url + "');";
-				}else{
+				} else {
 					_style += "background:url('" + _tlData.img.url + "');";
 				}
 			}
@@ -162,7 +162,7 @@ function createDom(ele, type, className) {
 		_tf += " scale(" + _sx + "," + _sy + ")";
 	}
 
-	if (_tf !== "") {
+	if (_tf !== '') {
 		_style +=
 			"transform-origin:" + (_tx - _x) + "px " + (_ty - _y) + "px;" +
 			"-webkie-transform-origin:" + (_tx - _x) + "px " + (_ty - _y) + "px;" +
@@ -275,7 +275,7 @@ function exportHtml(text) {
 	FLfile.write(_fileURL, _text);
 }
 
-function exportCss (text){
+function exportCss(text) {
 	var _folderURI = fileURI + 'css';
 	var _fileURL = _folderURI + '/main.css';
 	var _text = text;
