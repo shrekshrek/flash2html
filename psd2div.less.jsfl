@@ -139,7 +139,10 @@ function createDom(ele, type) {
 		case "p":
 			_style +=
 				"width:" + _w + "px;" +
-				"height:" + _h + "px;";
+				"height:" + _h + "px;" +
+				'color:' + ele.getTextAttr('fillColor') + ';' +
+				'font-size:' + ele.getTextAttr('size') + 'px;' +
+				'text-align:' + ele.getTextAttr('alignment') + ';';
 			break;
 	}
 
@@ -209,7 +212,7 @@ function createDom(ele, type) {
 	if (_class != '' && _style != '') {
 		_css = '.' + _class + '{' + _style + _css + '}';
 	}
-	
+
 	return {
 		html: _html,
 		css: _css
@@ -270,7 +273,7 @@ function exportImg(libItem) {
 
 function exportHtml(text) {
 	var _fileURL = fileURI + 'index.html';
-	var _text = '<!DOCTYPE html><html><head lang="en"><meta charset="UTF-8"><title></title><style>body,div,ul,li,img,p,a,h1,h2,h3,input,span{margin:0px;padding:0px;border:0px;}html,body{background:' + doc.backgroundColor + '}</style><link rel="stylesheet" href="css/main.css"/></head><body>' + text + '</body></html>';
+	var _text = '<!DOCTYPE html><html><head lang="en"><meta charset="UTF-8"><title></title><style>body,div,ul,li,img,p,a,h1,h2,h3,input,span{margin:0px;padding:0px;border:0px;}html,body{background:' + doc.backgroundColor + '}</style><link rel="stylesheet" href="css/main.less"/></head><body>' + text + '</body></html>';
 	FLfile.write(_fileURL, _text);
 }
 

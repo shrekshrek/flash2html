@@ -41,7 +41,7 @@ function cookTimeline(timeline, className) {
 						break;
 					case 'shape':
 						break;
-					case 'text':fl.trace(_ele.textType);
+					case 'text':
 						switch (_ele.textType) {
 							case 'input':
 								_dom = createDom(_ele, 'input', className);
@@ -140,7 +140,10 @@ function createDom(ele, type, className) {
 		case "p":
 			_style +=
 				"width:" + _w + "px;" +
-				"height:" + _h + "px;";
+				"height:" + _h + "px;" +
+				'color:' + ele.getTextAttr('fillColor') + ';' +
+				'font-size:' + ele.getTextAttr('size') + 'px;' +
+				'text-align:' + ele.getTextAttr('alignment') + ';';
 			break;
 	}
 
@@ -207,7 +210,7 @@ function createDom(ele, type, className) {
 			break;
 	}
 
-	if (className != '' && _style != '') {
+	if (_class != '' && _style != '') {
 		_css = '.' + className + '{' + _style + '}' + _css;
 	}
 
