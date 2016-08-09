@@ -102,18 +102,18 @@ function createDom(ele, type, center) {
 
     var _ox = _tx - _x - _cx;
     var _oy = _ty - _y - _cy;
-
+    // fl.trace(_tx + '|' + _ty + '|' + center.x + '|' + center.y + '|' + (_tx - center.x) + '|' + (_ty - center.y));
     if (ele.name) _js += ",name:'" + ele.name + "'";
-    if ((_tx - center.x) != 0 && (_ty - center.y) != 0) _js += ",position: [" + (_tx - center.x) + ", " + (_ty - center.y) + ", 0]";
-    if (_sx != 1 && _sy != 1) _js += ",scale: [" + _sx + "," + _sy + "]";
+    if ((_tx - center.x) != 0 || (_ty - center.y) != 0) _js += ",position: [" + (_tx - center.x) + ", " + (_ty - center.y) + ", 0]";
+    if (_sx != 1 || _sy != 1) _js += ",scale: [" + _sx + "," + _sy + "]";
     if (_r != 0) _js += ",rotation:[0,0," + _r + "]";
     if (_a < 1) _js += ",visibility:[{alpha:" + _r + "}]";
-    if (_ox != 0 && _oy != 0) _js += ",origin:[" + (_ox + _cx) + "," + (_oy + _cy) + "]";
+    if (_ox != 0 || _oy != 0) _js += ",origin:[" + (_ox + _cx) + "," + (_oy + _cy) + "]";
     if (_tlData.img) _js += ",material: [{image: '" + _tlData.img.url + "'}]";
     if (_tlData.js != '') _js += ", children:[" + _tlData.js + "]";
 
     _js += "}";
-
+    // fl.trace(_js);
     return {
         js: _js
     };
