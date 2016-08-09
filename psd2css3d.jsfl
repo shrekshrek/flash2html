@@ -107,8 +107,8 @@ function createDom(ele, type, center) {
     if ((_tx - center.x) != 0 || (_ty - center.y) != 0) _js += ",position: [" + (_tx - center.x) + ", " + (_ty - center.y) + ", 0]";
     if (_sx != 1 || _sy != 1) _js += ",scale: [" + _sx + "," + _sy + "]";
     if (_r != 0) _js += ",rotation:[0,0," + _r + "]";
-    if (_a < 1) _js += ",visibility:[{alpha:" + _a + "}]";
     if (_ox != 0 || _oy != 0) _js += ",origin:[" + (_ox + _cx) + "," + (_oy + _cy) + "]";
+    if (_a < 1) _js += ",visibility:[{alpha:" + _a + "}]";
     if (_tlData.img) _js += ",material: [{image: '" + _tlData.img.url + "'}]";
     if (_tlData.js != '') _js += ", children:[" + _tlData.js + "]";
 
