@@ -110,7 +110,7 @@ function createDom(ele, type) {
 		case 'div':
 		case 'input':
 		case 'p':
-			_class = ele.name;
+			_class = ele.name || (ele.libraryItem ? checkName(ele.libraryItem.name).name : '');
 			break;
 	}
 
@@ -221,53 +221,41 @@ function createDom(ele, type) {
 
 function checkName(name) {
 	var _a = name.split("/");
+	var _path = [];
+	var _file = {};
 	for (var _len = _a.length, i = _len - 1; i >= 0; i--) {
 		var _t = _a[i];
-		var _n1 = _t.indexOf("Asset");
-		if (_n1 >= 0) {
-			_a.splice(i, 1);
+		if (i == _len - 1) {
+			var _exp = /(.+)\.([^\.]+)$/;
+			var _a2 = _exp.exec(_t);
+			_file = {name: _a2 ? _a2[1] : _t, ext: _a2 ? _a2[2] : 'png'};
 		} else {
-			var _n2 = _t.lastIndexOf(".");
-			_t = _n2 >= 0 ? _t.slice(0, _n1) : _t;
-			_t = _t.replace(/[\.\s]/g, "_");
-			_a[i] = _t;
+			if (_t.indexOf("Asset") == -1) _path.unshift(_t);
 		}
 	}
-	var _name = _a.pop();
 
 	return {
-		path: _a,
-		name: _name
+		path: _path,
+		file: _file
 	};
 }
 
 function exportImg(libItem) {
-	//fl.trace(libItem.originalCompressionType+','+libItem.compressionType);
-	var URI = 'images';
-	var aURL, rURL;
+	var _uri = 'images';
+	var _url;
 	var _data = checkName(libItem.name);
 
 	for (var i in _data.path) {
-		URI += '/' + _data.path[i];
-		FLfile.createFolder(fileURI + URI);
+		_uri += '/' + _data.path[i];
+		FLfile.createFolder(fileURI + _uri);
 	}
 
-	var _name = _data.name;
-	switch (libItem.compressionType) {
-		case 'photo':
-			rURL = URI + '/' + _name + '.jpg';
-			aURL = fileURI + rURL;
-			break;
-		case 'lossless':
-			rURL = URI + '/' + _name + '.png';
-			aURL = fileURI + rURL;
-			break;
-	}
-	libItem.exportToFile(aURL, 100);
+	_url = _uri + '/' + _data.file.name + '.' + _data.file.ext;
+	libItem.exportToFile(fileURI + _url, 100);
 
 	return {
 		name: libItem.name,
-		url: rURL
+		url: _url
 	};
 }
 

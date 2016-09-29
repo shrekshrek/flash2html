@@ -12,7 +12,7 @@ function run() {
 }
 
 
-function cookTimeline(timeline, center) {
+function cookTimeline(timeline) {
     var _js = '';
     var _uniqueImg = '';
     for (var _len = timeline.layers.length, j = _len - 1; j >= 0; j--) {
@@ -26,7 +26,7 @@ function cookTimeline(timeline, center) {
                     case 'instance':
                         switch (_ele.instanceType) {
                             case 'symbol':
-                                _dom = createDom(_ele, 'div', center);
+                                _dom = createDom(_ele, 'div', {x: _uniqueImg?(_uniqueImg.width/2):0, y: _uniqueImg?(_uniqueImg.height/2):0});
                                 break;
                             case 'bitmap':
                                 _uniqueImg = {
@@ -71,10 +71,10 @@ function createDom(ele, type, center) {
     ele.scaleX = 1;
     ele.scaleY = 1;
 
-    var _w = Math.round(ele.width);
-    var _h = Math.round(ele.height);
-    var _cx = Math.round(_w / 2);
-    var _cy = Math.round(_h / 2);
+    var _w = 0;
+    var _h = 0;
+    var _cx = 0;
+    var _cy = 0;
     var _x = Math.round(ele.x);
     var _y = Math.round(ele.y);
     var _tx = Math.round(ele.transformX);
@@ -89,15 +89,21 @@ function createDom(ele, type, center) {
     ele.scaleX = _sx;
     ele.scaleY = _sy;
 
-    var _tlData = cookTimeline(ele.libraryItem.timeline, {x: _cx, y: _cy});
+    var _tlData = cookTimeline(ele.libraryItem.timeline);
 
     var _js = '';
 
     if (_tlData.img) {
+        _w = Math.round(_tlData.img.width);
+        _h = Math.round(_tlData.img.height);
+        _cx = Math.round(_w / 2);
+        _cy = Math.round(_h / 2);
+
         _js += "{type: 'plane'";
         _js += ",size: [" + _w + ", " + _h + "]";
     } else {
         _js += "{type: 'sprite'";
+
     }
 
     var _ox = _tx - _x - _cx;
