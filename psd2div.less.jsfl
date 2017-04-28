@@ -110,7 +110,7 @@ function createDom(ele, type) {
 		case 'div':
 		case 'input':
 		case 'p':
-			_class = ele.name || (ele.libraryItem ? checkName(ele.libraryItem.name).name : '');
+			_class = ele.name || (ele.libraryItem ? checkName(ele.libraryItem.name).file.name : '');
 			break;
 	}
 
