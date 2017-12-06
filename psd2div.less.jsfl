@@ -32,6 +32,8 @@ function cookTimeline(timeline) {
 								break;
 							case 'bitmap':
 								_uniqueImg = {
+									x: _ele.x,
+									y: _ele.y,
 									width: _ele.width,
 									height: _ele.height,
 									url: exportImg(_ele.libraryItem).url
@@ -127,7 +129,8 @@ function createDom(ele, type) {
 			if (_tlData.img) {
 				_style +=
 					"width:" + Math.round(_tlData.img.width) + "px;" +
-					"height:" + Math.round(_tlData.img.height) + "px;";
+					"height:" + Math.round(_tlData.img.height) + "px;" +
+					"margin:" + Math.round(_tlData.img.y) + "px 0 0 " + Math.round(_tlData.img.x) + "px;"; 
 				if (_class != '') {
 					_style += "background:url('../" + _tlData.img.url + "');";
 				} else {
