@@ -12,7 +12,6 @@ function run() {
 	exportCss(_tlData.css);
 }
 
-
 function cookTimeline(timeline, className) {
 	var _html = '';
 	var _css = '';
@@ -21,6 +20,27 @@ function cookTimeline(timeline, className) {
 		var _layer = timeline.layers[j];
 		if (_layer.layerType == 'normal') {
 			var elements = _layer.frames[0].elements;
+
+			for (var i in elements) {
+                var _ele = elements[i];
+                var _dom = null;
+                switch (_ele.elementType) {
+                    case 'instance':
+                        switch (_ele.instanceType) {
+                            case 'bitmap':
+                                _uniqueImg = {
+                                    x: _ele.x,
+                                    y: _ele.y,
+                                    width: _ele.width,
+                                    height: _ele.height,
+                                    url: exportImg(_ele.libraryItem).url
+                                };
+                                break;
+                        }
+                        break;
+                }
+            }
+
 			for (var i in elements) {
 				var _ele = elements[i];
 				var _dom = null;
@@ -28,16 +48,7 @@ function cookTimeline(timeline, className) {
 					case 'instance':
 						switch (_ele.instanceType) {
 							case 'symbol':
-								_dom = createDom(_ele, 'div', className);
-								break;
-							case 'bitmap':
-								_uniqueImg = {
-									x: _ele.x,
-									y: _ele.y,
-									width: _ele.width,
-									height: _ele.height,
-									url: exportImg(_ele.libraryItem).url
-								};
+								_dom = createDom(_ele, 'div', className, _uniqueImg);
 								break;
 						}
 						break;
@@ -46,10 +57,10 @@ function cookTimeline(timeline, className) {
 					case 'text':
 						switch (_ele.textType) {
 							case 'input':
-								_dom = createDom(_ele, 'input', className);
+								_dom = createDom(_ele, 'input', className, _uniqueImg);
 								break;
 							default:
-								_dom = createDom(_ele, 'p', className);
+								_dom = createDom(_ele, 'p', className, _uniqueImg);
 								break;
 						}
 						break;
@@ -70,13 +81,13 @@ function cookTimeline(timeline, className) {
 	};
 }
 
-function createDom(ele, type, className) {
-	var _a = Math.round(ele.colorAlphaPercent) / 100;
-	var _r = Math.round(ele.rotation);
+function createDom(ele, type, className, pimg) {
+	var _a = Math.round(ele.colorAlphaPercent) / 100
+	var _r = Math.round(ele.rotation * 10) / 10;
 	var _sx = Math.round(ele.scaleX * 100) / 100;
 	var _sy = Math.round(ele.scaleY * 100) / 100;
-	var _kx = Math.round(ele.skewX);
-	var _ky = Math.round(ele.skewY);
+	var _kx = Math.round(ele.skewX * 10) / 10;
+	var _ky = Math.round(ele.skewY * 10) / 10;
 
 	if (!isNaN(_r)) {
 		ele.rotation = 0;
@@ -123,7 +134,7 @@ function createDom(ele, type, className) {
 			break;
 	}
 
-	_style += 'position:absolute;' + 'left:' + _x + 'px;' + 'top:' + _y + 'px;';
+	_style += 'position:absolute;' + 'left:' + (_x + (pimg?-pimg.x:0)) + 'px;' + 'top:' + (_y + (pimg?-pimg.y:0)) + 'px;';
 
 	switch (type) {
 		case "div":
@@ -169,11 +180,19 @@ function createDom(ele, type, className) {
 	}
 
 	if (_tf !== '') {
-		_style +=
-			"transform-origin:" + (_tx - _x) + "px " + (_ty - _y) + "px;" +
-			"-webkie-transform-origin:" + (_tx - _x) + "px " + (_ty - _y) + "px;" +
-			"transform:" + _tf + ";" +
-			"-webkie-transform:" + _tf + ";";
+		if (_tlData.img) {
+			_style +=
+				"transform-origin:" + (_tx - _x - Math.round(_tlData.img.x)) + "px " + (_ty - _y - Math.round(_tlData.img.y)) + "px;" +
+				"-webkie-transform-origin:" + (_tx - _x - Math.round(_tlData.img.x)) + "px " + (_ty - _y - Math.round(_tlData.img.y)) + "px;" +
+				"transform:" + _tf + ";" +
+				"-webkie-transform:" + _tf + ";";
+		}else{
+			_style +=
+				"transform-origin:" + (_tx - _x) + "px " + (_ty - _y) + "px;" +
+				"-webkie-transform-origin:" + (_tx - _x) + "px " + (_ty - _y) + "px;" +
+				"transform:" + _tf + ";" +
+				"-webkie-transform:" + _tf + ";";
+		}
 	}
 
 	switch (type) {

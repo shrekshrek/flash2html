@@ -21,6 +21,27 @@ function cookTimeline(timeline) {
 		var _layer = timeline.layers[j];
 		if (_layer.layerType == 'normal') {
 			var elements = _layer.frames[0].elements;
+
+			for (var i in elements) {
+                var _ele = elements[i];
+                var _dom = null;
+                switch (_ele.elementType) {
+                    case 'instance':
+                        switch (_ele.instanceType) {
+                            case 'bitmap':
+                                _uniqueImg = {
+                                    x: _ele.x,
+                                    y: _ele.y,
+                                    width: _ele.width,
+                                    height: _ele.height,
+                                    url: exportImg(_ele.libraryItem).url
+                                };
+                                break;
+                        }
+                        break;
+                }
+            }
+
 			for (var i in elements) {
 				var _ele = elements[i];
 				var _dom = null;
@@ -28,16 +49,7 @@ function cookTimeline(timeline) {
 					case 'instance':
 						switch (_ele.instanceType) {
 							case 'symbol':
-								_dom = createDom(_ele, 'div');
-								break;
-							case 'bitmap':
-								_uniqueImg = {
-									x: _ele.x,
-									y: _ele.y,
-									width: _ele.width,
-									height: _ele.height,
-									url: exportImg(_ele.libraryItem).url
-								};
+								_dom = createDom(_ele, 'div', _uniqueImg);
 								break;
 						}
 						break;
@@ -46,10 +58,10 @@ function cookTimeline(timeline) {
 					case 'text':
 						switch (_ele.textType) {
 							case 'input':
-								_dom = createDom(_ele, 'input');
+								_dom = createDom(_ele, 'input', _uniqueImg);
 								break;
 							default:
-								_dom = createDom(_ele, 'p');
+								_dom = createDom(_ele, 'p', _uniqueImg);
 								break;
 						}
 						break;
@@ -70,13 +82,13 @@ function cookTimeline(timeline) {
 	};
 }
 
-function createDom(ele, type) {
+function createDom(ele, type, pimg) {
 	var _a = Math.round(ele.colorAlphaPercent) / 100;
-	var _r = Math.round(ele.rotation);
+	var _r = Math.round(ele.rotation * 10) / 10;
 	var _sx = Math.round(ele.scaleX * 100) / 100;
 	var _sy = Math.round(ele.scaleY * 100) / 100;
-	var _kx = Math.round(ele.skewX);
-	var _ky = Math.round(ele.skewY);
+	var _kx = Math.round(ele.skewX * 10) / 10;
+	var _ky = Math.round(ele.skewY * 10) / 10;
 
 	if (!isNaN(_r)) {
 		ele.rotation = 0;
@@ -122,7 +134,7 @@ function createDom(ele, type) {
 			break;
 	}
 
-	_style += 'position:absolute;' + 'left:' + _x + 'px;' + 'top:' + _y + 'px;';
+	_style += 'position:absolute;' + 'left:' + (_x + (pimg?-pimg.x:0)) + 'px;' + 'top:' + (_y + (pimg?-pimg.y:0)) + 'px;';
 
 	switch (type) {
 		case "div":
@@ -168,11 +180,19 @@ function createDom(ele, type) {
 	}
 
 	if (_tf !== "") {
-		_style +=
-			"transform-origin:" + (_tx - _x) + "px " + (_ty - _y) + "px;" +
-			"-webkie-transform-origin:" + (_tx - _x) + "px " + (_ty - _y) + "px;" +
-			"transform:" + _tf + ";" +
-			"-webkie-transform:" + _tf + ";";
+		if (_tlData.img) {
+			_style +=
+				"transform-origin:" + (_tx - _x - Math.round(_tlData.img.x)) + "px " + (_ty - _y - Math.round(_tlData.img.y)) + "px;" +
+				"-webkie-transform-origin:" + (_tx - _x - Math.round(_tlData.img.x)) + "px " + (_ty - _y - Math.round(_tlData.img.y)) + "px;" +
+				"transform:" + _tf + ";" +
+				"-webkie-transform:" + _tf + ";";
+		}else{
+			_style +=
+				"transform-origin:" + (_tx - _x) + "px " + (_ty - _y) + "px;" +
+				"-webkie-transform-origin:" + (_tx - _x) + "px " + (_ty - _y) + "px;" +
+				"transform:" + _tf + ";" +
+				"-webkie-transform:" + _tf + ";";
+		}
 	}
 
 	switch (type) {
