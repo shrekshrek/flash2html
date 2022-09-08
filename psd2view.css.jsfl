@@ -6,14 +6,13 @@ function run() {
 	lib = doc.library;
 	fileURI = doc.pathURI.slice(0, doc.pathURI.lastIndexOf("/") + 1);
 
-	var _tlData = cookTimeline(timeline);
+	var _tlData = cookTimeline(timeline, '');
 
 	exportHtml(_tlData.html);
-	exportLess(_tlData.css);
+	exportCss(_tlData.css);
 }
 
-
-function cookTimeline(timeline) {
+function cookTimeline(timeline, className) {
 	var _html = '';
 	var _css = '';
 	var _uniqueImg = '';
@@ -49,7 +48,7 @@ function cookTimeline(timeline) {
 					case 'instance':
 						switch (_ele.instanceType) {
 							case 'symbol':
-								_dom = createDom(_ele, 'div', _uniqueImg);
+								_dom = createDom(_ele, 'view', className, _uniqueImg);
 								break;
 						}
 						break;
@@ -58,10 +57,10 @@ function cookTimeline(timeline) {
 					case 'text':
 						switch (_ele.textType) {
 							case 'input':
-								_dom = createDom(_ele, 'input', _uniqueImg);
+								_dom = createDom(_ele, 'input', className, _uniqueImg);
 								break;
 							default:
-								_dom = createDom(_ele, 'p', _uniqueImg);
+								_dom = createDom(_ele, 'text', className, _uniqueImg);
 								break;
 						}
 						break;
@@ -82,8 +81,8 @@ function cookTimeline(timeline) {
 	};
 }
 
-function createDom(ele, type, pimg) {
-	var _a = Math.round(ele.colorAlphaPercent) / 100;
+function createDom(ele, type, className, pimg) {
+	var _a = Math.round(ele.colorAlphaPercent) / 100
 	var _r = Math.round(ele.rotation * 10) / 10;
 	var _sx = Math.round(ele.scaleX * 100) / 100;
 	var _sy = Math.round(ele.scaleY * 100) / 100;
@@ -118,51 +117,53 @@ function createDom(ele, type, pimg) {
 	var _class = '',
 		_html = '',
 		_css = '',
-		_style = '';
+		_style = '',
+		_tlData = '';
 
 	switch (type) {
-		case 'div':
+		case 'view':
 		case 'input':
-		case 'p':
+		case 'text':
 			_class = ele.name || (ele.libraryItem ? checkName(ele.libraryItem.name).file.name : '');
+			className += (className && _class ? ' .' : '') + _class;
 			break;
 	}
 
 	switch (type) {
-		case "div":
-			var _tlData = cookTimeline(ele.libraryItem.timeline);
+		case "view":
+			_tlData = cookTimeline(ele.libraryItem.timeline, className);
 			break;
 	}
 
 	var _x1 = _x + (pimg ? -pimg.x : 0);
 	var _y1 = _y + (pimg ? -pimg.y : 0);
-	if (_x1 != 0) _style += 'left:' + _x1 + 'px;';
-	if (_y1 != 0) _style += 'top:' + _y1 + 'px;';
+	if (_x1 != 0) _style += 'left:' + _x1 + 'rpx;';
+	if (_y1 != 0) _style += 'top:' + _y1 + 'rpx;';
 
 	switch (type) {
-		case "div":
+		case "view":
 			if (_tlData.img) {
 				_style +=
-					"width:" + Math.round(_tlData.img.width) + "px;" +
-					"height:" + Math.round(_tlData.img.height) + "px;";
+					"width:" + Math.round(_tlData.img.width) + "rpx;" +
+					"height:" + Math.round(_tlData.img.height) + "rpx;";
 
 				if (Math.round(_tlData.img.y) != 0 || Math.round(_tlData.img.x) != 0)
-					_style += "margin:" + Math.round(_tlData.img.y) + "px 0 0 " + Math.round(_tlData.img.x) + "px;";
+					_style += "margin:" + Math.round(_tlData.img.y) + "rpx 0 0 " + Math.round(_tlData.img.x) + "rpx;";
 
 				if (_class != '') {
-					_style += "background:url('../" + _tlData.img.url + "');";
+					_style += "background-image:url('../" + _tlData.img.url + "');";
 				} else {
-					_style += "background:url('" + _tlData.img.url + "');";
+					_style += "background-image:url('" + _tlData.img.url + "');";
 				}
 			}
 			break;
 		case "input":
-		case "p":
+		case "text":
 			_style +=
-				"width:" + _w + "px;" +
-				"height:" + _h + "px;" +
+				"width:" + _w + "rpx;" +
+				"height:" + _h + "rpx;" +
 				'color:' + ele.getTextAttr('fillColor') + ';' +
-				'font-size:' + ele.getTextAttr('size') + 'px;' +
+				'font-size:' + ele.getTextAttr('size') + 'rpx;' +
 				'text-align:' + ele.getTextAttr('alignment') + ';';
 			break;
 	}
@@ -185,31 +186,27 @@ function createDom(ele, type, pimg) {
 		_tf += " scale(" + _sx + "," + _sy + ")";
 	}
 
-	if (_tf !== "") {
+	if (_tf !== '') {
 		if (_tlData.img) {
 			_style +=
-				"transform-origin:" + (_tx - _x - Math.round(_tlData.img.x)) + "px " + (_ty - _y - Math.round(_tlData.img.y)) + "px;" +
-				"-webkie-transform-origin:" + (_tx - _x - Math.round(_tlData.img.x)) + "px " + (_ty - _y - Math.round(_tlData.img.y)) + "px;" +
-				"transform:" + _tf + ";" +
-				"-webkie-transform:" + _tf + ";";
+				"transform-origin:" + (_tx - _x - Math.round(_tlData.img.x)) + "rpx " + (_ty - _y - Math.round(_tlData.img.y)) + "rpx;" +
+				"transform:" + _tf + ";";
 		} else {
 			_style +=
-				"transform-origin:" + (_tx - _x) + "px " + (_ty - _y) + "px;" +
-				"-webkie-transform-origin:" + (_tx - _x) + "px " + (_ty - _y) + "px;" +
-				"transform:" + _tf + ";" +
-				"-webkie-transform:" + _tf + ";";
+				"transform-origin:" + (_tx - _x) + "rpx " + (_ty - _y) + "rpx;" +
+				"transform:" + _tf + ";";
 		}
 	}
 
 	switch (type) {
-		case "div":
+		case "view":
 			if (_class != '') {
-				_html = '<div class="' + _class + '">' + _tlData.html + '</div>';
+				_html = '<view class="' + _class + '">' + _tlData.html + '</view>';
 			} else {
-				if (_style == '') {
-					_html = '<div>' + _tlData.html + '</div>';
+				if (_style != '') {
+					_html = '<view style="' + _style + '">' + _tlData.html + '</view>';
 				} else {
-					_html = '<div style="' + _style + '">' + _tlData.html + '</div>';
+					_html = '<view>' + _tlData.html + '</view>';
 				}
 			}
 			_css += _tlData.css;
@@ -225,21 +222,21 @@ function createDom(ele, type, pimg) {
 				}
 			}
 			break;
-		case "p":
+		case "text":
 			if (_class != '') {
-				_html = '<p class="' + _class + '">' + ele.getTextString() + '</p>';
+				_html = '<text class="' + _class + '">' + ele.getTextString() + '</text>';
 			} else {
 				if (_style == '') {
-					_html = '<p>' + ele.getTextString() + '</p>';
+					_html = '<text>' + ele.getTextString() + '</text>';
 				} else {
-					_html = '<p style="' + _style + '">' + ele.getTextString() + '</p>';
+					_html = '<text style="' + _style + '">' + ele.getTextString() + '</text>';
 				}
 			}
 			break;
 	}
 
-	if (_class != '') {
-		_css = '.' + _class + '{' + _style + _css + '}';
+	if (_class != '' && _style != '') {
+		_css = '.' + className + '{' + _style + '}' + _css;
 	}
 
 	return {
@@ -293,14 +290,14 @@ function exportImg(libItem) {
 
 function exportHtml(text) {
 	var _fileURL = fileURI + 'index.html';
-	var _text = '<!DOCTYPE html><html><head lang="en"><meta charset="UTF-8"><title></title><style>body,div,ul,li,img,p,a,h1,h2,h3,input,span{margin:0px;padding:0px;border:0px;}html,body{background:' + doc.backgroundColor + '}</style><link rel="stylesheet" href="css/main.less"/></head><body>' + text + '</body></html>';
+	var _text = '<!DOCTYPE html><html><head lang="en"><meta charset="UTF-8"><title></title><link rel="stylesheet" href="css/main.css"/></head><body>' + text + '</body></html>';
 	FLfile.write(_fileURL, _text);
 }
 
-function exportLess(text) {
+function exportCss(text) {
 	var _folderURI = fileURI + 'css';
-	var _fileURL = _folderURI + '/main.less';
-	var _text = 'div{position:absolute;}' + text;
+	var _fileURL = _folderURI + '/main.css';
+	var _text = text;
 	FLfile.createFolder(_folderURI);
 	FLfile.write(_fileURL, _text);
 }
